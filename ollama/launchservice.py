@@ -126,12 +126,23 @@ def flask_app():
         url = f"http://localhost:{OLLAMA_PORT}/"
         print("Calling internal ollama now ....")
         try:
-            int_response = requests.get(url)
-            print(f"Ready to respond {int_response.content}")
-            return
+            ir = requests.get(url)
+            return ir.text
         except Exception:
-            raise HTTPException(status_code=int_response.status_code)
+            raise HTTPException(status_code=ir.status_code)
 
+    @web_app.get("/api/tags")
+    def api_tags():
+        url = f"http://localhost:{OLLAMA_PORT}/api/tags"
+        print("Calling internal ollama now ....")
+        try:
+            ir = requests.get(url)
+            if ir.status_code==200:
+                return ir.json()
+            else:
+                raise HTTPException(status_code=ir.status_code)
+        except Exception:
+            raise HTTPException(status_code=ir.status_code)
     @web_app.post("/echo")
     def echo():
         return request.json
